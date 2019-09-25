@@ -33,8 +33,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "fhwang-wisper-mongoid", ">= 0.2.3"
-  spec.add_runtime_dependency "mongoid"
-  spec.add_runtime_dependency "sync_machine", ">= 0.4.0"
+  spec.add_runtime_dependency 'mongoid'
+  spec.add_runtime_dependency "sync_machine", ">= 0.5.0"
 
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "factory_bot"
