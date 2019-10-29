@@ -1,9 +1,20 @@
+class Address
+  include Mongoid::Document
+
+  field :address1,  type: String
+  field :address2,  type: String
+  field :city,      type: String
+  field :state,     type: String
+  field :zip,       type: String
+end
+
 class Customer
   include Mongoid::Document
 
   field :name, type: String
 
-  has_many :orders
+  embeds_one  :address
+  has_many    :orders
 end
 
 class Order
