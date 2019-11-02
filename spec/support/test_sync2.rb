@@ -1,18 +1,16 @@
-module TestSync
+module TestSync2
   extend SyncMachine::Mongoid
 
   subject :order
 
   class ChangeListener < SyncMachine::ChangeListener
-    listen_to_models :customer, :order
+    listen_to_models :order
   end
 
   class FindSubjectsWorker < SyncMachine::FindSubjectsWorker
-    subject_ids_from_customer do |customer|
-      customer.order_ids
+    subject_ids_from_order do |order|
+      "O#{order.id}"
     end
-
-    subject_ids_from_order
   end
 
   class EnsurePublicationWorker < SyncMachine::EnsurePublicationWorker
@@ -27,16 +25,9 @@ module TestSync
     publish do |_subject, payload_body|
       PostService.post(payload_body)
     end
-
-    after_publish do |subject|
-      PostService.after_post(subject)
-    end
   end
 
   class PostService
-    def self.after_post(_subject)
-    end
-
     def self.post(_payload_body)
     end
   end
