@@ -25,7 +25,7 @@ RSpec.describe SyncMachine::FindSubjectsWorker do
     end
   end
 
-  it "wraps a single ID in an array" do
+  it "handles the default case" do
     order = create(:order)
     enqueue_time_str = Time.now.iso8601
     TestSync::FindSubjectsWorker.new.perform(
@@ -35,6 +35,19 @@ RSpec.describe SyncMachine::FindSubjectsWorker do
     job = TestSync::EnsurePublicationWorker.jobs.first
     expect(job['args'].count).to eq(2)
     expect(job['args'].first).to eq(order.id.to_s)
+    expect(job['args'].last).to eq(enqueue_time_str)
+  end
+
+  it "allows a manual override of the default case and wraps a single ID in an array" do
+    order = create(:order)
+    enqueue_time_str = Time.now.iso8601
+    TestSync2::FindSubjectsWorker.new.perform(
+      'Order', order.id.to_s, ['name'], enqueue_time_str
+    )
+    expect(TestSync2::EnsurePublicationWorker.jobs.count).to eq(1)
+    job = TestSync2::EnsurePublicationWorker.jobs.first
+    expect(job['args'].count).to eq(2)
+    expect(job['args'].first).to eq("O#{order.id.to_s}")
     expect(job['args'].last).to eq(enqueue_time_str)
   end
 end
