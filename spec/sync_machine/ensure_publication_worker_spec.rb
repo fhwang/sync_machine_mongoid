@@ -38,12 +38,19 @@ RSpec.describe SyncMachine::EnsurePublicationWorker do
 
     before do
       TestSync::Payload.create!(
-        body: payload, generated_at: Time.now, subject_id: subject.id.to_s
+        body: payload,
+        generated_at: Time.now - 1.minute,
+        subject_id: subject.id.to_s
       )
     end
 
     it "does not send the payload" do
       expect(TestSync::PostService).not_to receive(:post)
+      perform_for_mongoid
+    end
+
+    it "does not call the after_publish hook" do
+      expect(TestSync::PostService).not_to receive(:after_post)
       perform_for_mongoid
     end
   end
